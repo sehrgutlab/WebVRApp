@@ -14,6 +14,14 @@ to be available for VR display using Web browser.
 ![Image of Google Cardboard] (https://upload.wikimedia.org/wikipedia/en/d/d0/Chrome_Logo.svg )
 
 #Installation setup
-
+## Linux Tools Installation
+TBD
+## Python installation
+ $virtualenv localpy
+ $source localpy/bin/activate
+ $pip install -U -r requirements.txt
 
 #Usage
+
+(localpy)$cd WebVRApp/src
+(localpy)$crossbar start
