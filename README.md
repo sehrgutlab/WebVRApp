@@ -8,3 +8,6 @@ to be available for VR display using Web browser.
 ![Image of Google Cardboard] (https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Google-Cardboard.jpg/800px-Google-Cardboard.jpg )
 
 ## 2. 
+
+![Image of Google Cardboard] (https://upload.wikimedia.org/wikipedia/commons/1/1f/Smartphones_back.jpg )
+
