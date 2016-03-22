@@ -18,8 +18,11 @@ to be available for VR display using Web browser.
 TBD
 ## Python installation
  $virtualenv localpy
+
  $source localpy/bin/activate
+	
  $pip install -U -r requirements.txt
+
 
 #Usage
 
