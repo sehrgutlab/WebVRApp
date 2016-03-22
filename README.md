@@ -12,4 +12,4 @@ to be available for VR display using Web browser.
 
 ## 3. Chrome 
 
-![Image of Google Cardboard] (https://upload.wikimedia.org/wikipedia/commons/c/ca/Google_Chrome_for_Android_Icon_2016.svg )
+![Image of Google Cardboard] (https://upload.wikimedia.org/wikipedia/en/d/d0/Chrome_Logo.svg )
