@@ -1,0 +1,237 @@
+
+<!DOCTYPE html>
+<!--###############################################################################
+##
+##  Copyright (C) 2014, Tavendo GmbH and/or collaborators. All rights reserved.
+## 
+##  Redistribution and use in source and binary forms, with or without
+##  modification, are permitted provided that the following conditions are met:
+## 
+##  1. Redistributions of source code must retain the above copyright notice,
+##     this list of conditions and the following disclaimer.
+## 
+##  2. Redistributions in binary form must reproduce the above copyright notice,
+##     this list of conditions and the following disclaimer in the documentation
+##     and/or other materials provided with the distribution.
+## 
+##  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+##  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+##  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+##  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+##  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+##  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+##  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+##  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+##  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+##  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+##  POSSIBILITY OF SUCH DAMAGE.
+##
+###############################################################################
+-->
+
+<html>
+   <body>
+      <img id="video"></img>    
+	  <canvas id="c"></canvas>
+      <script>AUTOBAHN_DEBUG = true;</script>
+	  <script src="js/third-party/autobahn/autobahn.min.jgz"></script> 
+	  <script src="js/third-party/threejs/three.min.js"></script> 
+	  <script src="js/third-party/threejs/StereoEffect.js"></script> 
+	  <script src="js/third-party/threejs/OrbitControls.js"></script> 
+	  <script src="js/third-party/threejs/DeviceOrientationControls.js"></script> 
+	  
+      <script>
+		  
+	  var VRmage = "";
+	  var VRmage = document.createElement( 'img' );		
+	var canvas,renderer,camera,scene,texture = "";    
+      video = document.getElementById("video");
+         // the URL of the WAMP Router (Crossbar.io)
+         //
+         var wsuri;
+         if (document.location.origin == "file://") {
+            wsuri = "ws://127.0.0.1:8080/ws";
+
+         } else {
+            wsuri = (document.location.protocol === "http:" ? "ws:" : "wss:") + "//" +
+                        document.location.host + "/ws";
+         }
+
+
+         // the WAMP connection to the Router
+         //
+         var connection = new autobahn.Connection({
+            url: wsuri,
+            realm: "realm1"
+         });
+
+
+         // timers
+         //
+         var t1, t2;
+      
+
+         // fired when connection is established and session attached
+         //
+         connection.onopen = function (session, details) {
+
+            console.log("Connected");
+
+
+            // SUBSCRIBE to a topic and receive events
+            //
+            function VRCam (args) {
+				video = document.getElementById("video");
+				//video.src = 'data:image/jpeg;base64,'+  args[0];
+				console.log('  HERE  ');
+				texture = new THREE.Texture( VRmage );
+				//texture = THREE.ImageUtils.loadTexture(VRmage);
+				VRmage.onload = function()  {
+					texture.needsUpdate = true;
+					testvrinit();
+					render();
+				};
+				VRmage.src = 'data:image/jpeg;base64,'+args[0];
+				
+
+            }
+            
+            session.subscribe('com.example.image', VRCam).then(
+               function (sub) {
+                   console.log('subscribed to topic');
+               },
+               function (err) {
+                  console.log('failed to subscribe to topic', err);
+               }
+            );
+
+         };
+
+
+         // fired when connection was lost (or could not be established)
+         //
+         connection.onclose = function (reason, details) {
+            console.log("Connection lost: " + reason);
+           
+         }
+         // now actually open the connection
+         //
+	
+
+		var vrinit = function() {
+			
+		canvas = document.getElementById("c");
+		renderer = new THREE.WebGLRenderer({canvas: canvas});
+
+		camera = new THREE.PerspectiveCamera( 15, 1, 1, 1000 );
+		scene = new THREE.Scene();
+//var sphereGeo = new THREE.SphereGeometry(40, 16, 8);
+		//var sphereGeo = new THREE.BoxGeometry(180, 180, 180);
+		var sphereGeo = new THREE.BoxGeometry(100, 100,120);
+		
+		effect = new THREE.StereoEffect( renderer );
+		effect.eyeSeparation = 00;
+		effect.setSize( window.innerWidth*1, window.innerHeight*1 );
+		
+		var light = new THREE.DirectionalLight(0xE0E0FF, 1);
+		light.position.set(200, 500, 200);
+		scene.add(light);
+		
+		var light = new THREE.DirectionalLight(0xFFE0E0, 0.5);
+		light.position.set(-200, -500, -200);
+		scene.add(light);
+
+
+		camera.position.z = 800;
+
+		THREE.ImageUtils.crossOrigin = '';
+
+
+
+		texture = THREE.ImageUtils.loadTexture('test2.jpg');
+
+		var material = new THREE.MeshPhongMaterial({
+		ambient: 0x808080,
+		map: texture,
+		specular: 0xFFFFFF,
+		shininess: 30,
+		shading: THREE.SmoothShading,
+		});
+
+		var mesh = new THREE.Mesh(sphereGeo, material);
+		scene.add(mesh);
+
+}
+
+
+		var testvrinit = function() {
+			
+		canvas = document.getElementById("c");
+		renderer = new THREE.WebGLRenderer({canvas: canvas});
+
+		camera = new THREE.PerspectiveCamera( 15, 1, 1, 1000 );
+		scene = new THREE.Scene();
+//var sphereGeo = new THREE.SphereGeometry(40, 16, 8);
+		var sphereGeo = new THREE.BoxGeometry(100, 100,120);
+		
+		effect = new THREE.StereoEffect( renderer );
+		effect.eyeSeparation = 00;
+		effect.setSize( window.innerWidth*1, window.innerHeight*1 );
+		
+		var light = new THREE.DirectionalLight(0xE0E0FF, 1);
+		light.position.set(200, 500, 200);
+		scene.add(light);
+		
+		var light = new THREE.DirectionalLight(0xFFE0E0, 0.5);
+		light.position.set(-200, -500, -200);
+		scene.add(light);
+
+
+		camera.position.z = 800;
+
+		THREE.ImageUtils.crossOrigin = '';
+
+
+
+		
+
+		var material = new THREE.MeshPhongMaterial({
+		ambient: 0x808080,
+		map: texture,
+		specular: 0xFFFFFF,
+		shininess: 30,
+		shading: THREE.SmoothShading,
+		});
+
+		var mesh = new THREE.Mesh(sphereGeo, material);
+		scene.add(mesh);
+
+}
+
+
+
+
+var resize = function() {
+		var width = canvas.clientWidth;
+		var height = canvas.clientHeight;
+		if (canvas.width != width ||
+			canvas.height != height) {
+			renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);  // don't fucking update the style. Why does three.js fight CSS? It should respect CSS :(
+        
+			camera.aspect = canvas.clientWidth / canvas.clientHeight;
+			camera.updateProjectionMatrix();
+		}
+};
+
+var render = function() {
+	//	resize();
+  //  renderer.render(scene, camera);
+	effect.render( scene, camera );
+   // requestAnimationFrame(render);
+};
+         connection.open();
+        vrinit();
+		render();
+      </script>
+   </body>
+</html>
