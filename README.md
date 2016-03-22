@@ -11,5 +11,9 @@ to be available for VR display using Web browser.
 ![Image of Google Cardboard] (https://upload.wikimedia.org/wikipedia/commons/d/dc/Samsung_Galaxy_S_White.png )
 
 ## 3. Chrome 
-
 ![Image of Google Cardboard] (https://upload.wikimedia.org/wikipedia/en/d/d0/Chrome_Logo.svg )
+
+#Installation setup
+
+
+#Usage
