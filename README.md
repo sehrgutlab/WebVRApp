@@ -9,5 +9,5 @@ to be available for VR display using Web browser.
 
 ## 2. 
 
-![Image of Google Cardboard] (https://upload.wikimedia.org/wikipedia/commons/1/1f/Smartphones_back.jpg )
+![Image of Google Cardboard] (https://upload.wikimedia.org/wikipedia/commons/d/dc/Samsung_Galaxy_S_White.png )
 
