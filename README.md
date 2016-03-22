@@ -27,4 +27,6 @@ TBD
 #Usage
 
 (localpy)$cd WebVRApp/src
+
 (localpy)$crossbar start
+
