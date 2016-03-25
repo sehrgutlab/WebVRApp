@@ -33,14 +33,16 @@
    <body>
       <img id="video"></img>    
 	  <canvas id="c"></canvas>
-	  <script src="js/third-party/autobahn/autobahn.min.jgz"></script> 
+	  <script src="js/third-party/autobahn/autobahn.js"></script> 
 	  <script src="js/third-party/threejs/three.min.js"></script> 
 	  <script src="js/third-party/threejs/StereoEffect.js"></script> 
 	  <script src="js/third-party/threejs/OrbitControls.js"></script> 
 	  <script src="js/third-party/threejs/DeviceOrientationControls.js"></script> 
+	  <script src="js/third-party/gyro/gyro.js"></script>
 	  
       <script>
 		  
+	  var sessionvar;
 	  var VRmage = "";
 	  var VRmage = document.createElement( 'img' );		
 	var canvas,renderer,camera,scene,texture = "";    
@@ -69,6 +71,11 @@
          //
          var t1, t2;
       
+
+gyrotrack = function (session) 
+{
+  gyro.startTracking(callbackgyro);
+}
 
          // fired when connection is established and session attached
          //
@@ -103,6 +110,9 @@
                   console.log('failed to subscribe to topic', err);
                }
             );
+
+	sessionvar = session;
+	gyrotrack(session);
 
          };
 
@@ -231,6 +241,9 @@ var render = function() {
          connection.open();
         vrinit();
 		render();
+function callbackgyro(o) {
+sessionvar.publish ('com.myapp.topic1',[JSON.stringify(o)]);
+}
       </script>
    </body>
 </html>

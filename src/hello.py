@@ -54,10 +54,10 @@ class AppSession(ApplicationSession):
 
         # SUBSCRIBE to a topic and receive events
         #
-        def onhello(msg):
-            self.log.info("event for 'onhello' received: {msg}", msg=msg)
+        def on_event(i):
+            print("Got event: {}".format(i))
 
-        yield self.subscribe(onhello, 'com.example.onhello')
+	yield self.subscribe(on_event, 'com.myapp.topic1')
         self.log.info("subscribed to topic 'onhello'")
 
         # REGISTER a procedure for remote calling
@@ -89,24 +89,17 @@ class AppSession(ApplicationSession):
             self.img.save(self.buffer, "JPEG")
             self.imgStr =  base64.b64encode(self.buffer.getvalue())
             yield self.publish('com.example.image', self.imgStr)
-            # PUBLISH an event
-            #
-            #yield self.publish('com.example.oncounter', counter)
-            self.log.info("published to 'oncounter' with counter {counter}",
-                          counter=counter)
-            #counter += 1
-
             # CALL a remote procedure
             #
-            try:
-                res = yield self.call('com.example.mul2', counter, 3)
-                self.log.info("mul2() called with result: {result}",
-                              result=res)
-            except ApplicationError as e:
-                # ignore errors due to the frontend not yet having
-                # registered the procedure we would like to call
-                if e.error != 'wamp.error.no_such_procedure':
-                    raise e
+            #try:
+            #    res = yield self.call('com.example.mul2', counter, 3)
+            #    self.log.info("mul2() called with result: {result}",
+            #                  result=res)
+            #except ApplicationError as e:
+            #    # ignore errors due to the frontend not yet having
+            #    # registered the procedure we would like to call
+            #    if e.error != 'wamp.error.no_such_procedure':
+            #        raise e
             #return #yield sleep(0)
             #self.keyb.emit_click(uinput.KEY_V)
             yield sleep(0)
