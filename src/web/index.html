@@ -30,7 +30,7 @@
 -->
 
 <html>
-   <body>
+   <body bgcolor="#FFFFFF" >
       <img id="video"></img>    
 	  <canvas id="c"></canvas>
 	  <script src="js/third-party/autobahn/autobahn.js"></script> 
@@ -238,6 +238,7 @@ var render = function() {
 	effect.render( scene, camera );
    // requestAnimationFrame(render);
 };
+window.scrollTo(0,1);
          connection.open();
         vrinit();
 		render();

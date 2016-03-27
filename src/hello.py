@@ -43,19 +43,77 @@ from base64 import encodestring
 import cStringIO
 
 import uinput
+import json
 
 class AppSession(ApplicationSession):
 
     log = Logger()
-    events = ( uinput.KEY_E, uinput.KEY_H,  uinput.KEY_L, uinput.KEY_V )
+    events = ( uinput.KEY_E, uinput.KEY_H,  uinput.KEY_L, uinput.KEY_V, uinput.KEY_END,uinput.KEY_HOME, uinput.KEY_UP, uinput.KEY_DOWN )
 
+    lastzValue = 0.0
     @inlineCallbacks
     def onJoin(self, details):
 
         # SUBSCRIBE to a topic and receive events
         #
+        self.zstoreFlag = 1
+        self.lastzValue = 0.0
+	self.zCounter = 0
+        self.ystoreFlag = 1
+        self.lastyValue = 0.0
+
+        def y_direction(IMUTable):
+            if self.ystoreFlag == 1:
+                self.lastyValue  = abs( IMUTable['y'])
+                self.ystoreFlag = 0
+                return
+            curryValue = abs(IMUTable['y'])
+            ydiff = self.lastyValue  - curryValue
+            gammaValue = IMUTable['gamma']
+            if abs(gammaValue) > 66:
+                print "Z Stable" 
+                if ( curryValue > 1.5)  and (abs(ydiff) > 0.4):
+                    print "Right"
+                    self.keyb.emit_click(uinput.KEY_V)
+                if ( curryValue < 1.5) and  (abs(ydiff) > 0.4):
+                    print "Left"
+                    self.keyb.emit_click(uinput.KEY_END)
+            self.lastyValue  =  curryValue
+	    print "The diff is ",ydiff, abs(ydiff)
+
+ 
+        def z_direction(IMUTable):
+            if self.zstoreFlag == 1:
+                self.lastzValue  = IMUTable['z']
+                self.zstoreFlag = 0
+                return
+            currzValue = IMUTable['z']
+            zdiff = self.lastzValue  - currzValue
+            gammaValue = IMUTable['gamma']
+            if abs(gammaValue) > 66:
+                print "Z Stable" 
+                if ( currzValue > 1.5)  and (abs(zdiff) > 0.4):
+                    print "Forward"
+                    self.keyb.emit_click(uinput.KEY_UP)
+                if ( currzValue < 1.5) and  (abs(zdiff) > 0.4):
+                    print "Backward"
+                    self.keyb.emit_click(uinput.KEY_DOWN)
+            self.lastzValue  =  currzValue
+	    print "The diff is ",zdiff, abs(zdiff)
+
         def on_event(i):
             print("Got event: {}".format(i))
+            IMUTab = json.loads(i);
+            print IMUTab['z']
+            z_direction(IMUTab)
+            y_direction(IMUTab)
+            #if self.storeFlag == 1:
+            #   self.lastzValue  = IMUTab['z']
+            #   self.storeFlag = 0
+            #   return
+            #currzValue = IMUTab['z']
+            #zdiff = self.lastzValue  - currzValue
+            
 
 	yield self.subscribe(on_event, 'com.myapp.topic1')
         self.log.info("subscribed to topic 'onhello'")
@@ -70,10 +128,11 @@ class AppSession(ApplicationSession):
         self.log.info("procedure add2() registered")
 	self.keyb = uinput.Device(self.events) 
 	self.disp = SmartDisplay(visible=1, size=(800,600)).start()
+#	self.disp = SmartDisplay(visible=1, size=(640, 480) ).start()
 #	self.command = EasyProcess('celestia -s -f').start()	
 #	self.command = EasyProcess('lightdm --test-mode').start()	
 	self.p = Popen(['celestia'], stdout=PIPE, stdin=PIPE, stderr=PIPE)
-	#self.p = Popen(['xterm'], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
+#	self.p = Popen(['xterm'], stdout=PIPE, stdin=PIPE, stderr=PIPE)
 	
 
         # PUBLISH and CALL every second .. forever
@@ -101,6 +160,6 @@ class AppSession(ApplicationSession):
             #    if e.error != 'wamp.error.no_such_procedure':
             #        raise e
             #return #yield sleep(0)
-            #self.keyb.emit_click(uinput.KEY_V)
+#           self.keyb.emit_click(uinput.KEY_HOME)
             yield sleep(0)
             #stdout_data = self.p.communicate(input='o\n'.encode())
